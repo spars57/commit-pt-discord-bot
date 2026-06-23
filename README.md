@@ -1,30 +1,87 @@
-# 🤖 Commit PT Bot
+# Commit PT Bot
 
-O **Commit PT Bot** é um bot de Discord funcional desenvolvido em Node.js utilizando a biblioteca `discord.js` (v14). Este projeto foi criado com o objetivo de automatizar a gestão de servidores através de comandos práticos e informativos, seguindo as melhores práticas de segurança e estruturação de código para o **10.º ano**.
-
----
-
-# 🚀 Funcionalidades
-
-O bot responde instantaneamente a comandos de texto no servidor através dos seguintes gatilhos:
-
-*   `!ping` — Verifica a latência e a resposta rápida do bot.
-*   `!membros` — Retorna a quantidade exata e atualizada de utilizadores no servidor.
-*   `!info` — Gera um **Embed profissional** com os detalhes estruturados do servidor.
+A Discord bot for the Commit PT server, built with TypeScript and discord.js v14.
 
 ---
 
-# 🛠️ Tecnologias Utilizadas
+## Commands
 
-*   **Runtime:** Node.js (v24+)
-*   **Biblioteca Principal:** Discord.js (v14)
-*   **Segurança:** Dotenv (Gestão de variáveis de ambiente)
+| Command | Description |
+|---|---|
+| `/ping` | Checks if the bot is online |
+| `/members` | Shows the total number of members in the server |
+| `/members role:Commit+` | Shows the number of members with a specific role |
+| `/info` | Shows detailed information about the server |
 
 ---
 
-# 📦 Configuração e Instalação
+## Tech Stack
 
-# Passo 1: Clonar o Repositório
+- **Language:** TypeScript
+- **Library:** discord.js v14
+- **Linting:** ESLint + Prettier
+- **Git hooks:** Husky + commitlint (Conventional Commits)
+- **CI:** GitHub Actions
+
+---
+
+## Setup
+
+### 1. Install dependencies
 ```bash
-git clone [https://github.com/o-teu-utilizador/commit-pt-bot.git](https://github.com/o-teu-utilizador/commit-pt-bot.git)
-cd commit-pt-bot
+npm install
+```
+
+### 2. Configure environment variables
+
+Create a `.env` file at the root:
+```
+TOKEN=your_bot_token
+CLIENT_ID=your_application_id
+GUILD_ID=your_server_id
+```
+
+- `TOKEN` — found in the Discord Developer Portal under **Bot**
+- `CLIENT_ID` — found in **General Information** as **Application ID**
+- `GUILD_ID` — right-click your server in Discord and select **Copy Server ID** (requires Developer Mode)
+
+### 3. Register slash commands
+```bash
+npm run deploy
+```
+
+### 4. Start the bot
+```bash
+npm run dev
+```
+
+---
+
+## Scripts
+
+| Script | Description |
+|---|---|
+| `npm run dev` | Run the bot with ts-node |
+| `npm run build` | Compile TypeScript to `dist/` |
+| `npm run start` | Run the compiled bot |
+| `npm run deploy` | Register slash commands with Discord |
+| `npm run lint` | Run ESLint |
+| `npm run lint:fix` | Run ESLint with auto-fix |
+| `npm run format` | Format source files with Prettier |
+
+---
+
+## Contributing
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/). Commit messages must follow the format:
+
+```
+feat: add new command
+fix: correct member count
+chore: update dependencies
+```
+
+Before each commit, Husky will automatically run:
+- TypeScript type checking
+- ESLint + Prettier on staged files
+- Commit message validation
