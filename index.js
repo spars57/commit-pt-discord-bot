@@ -33,11 +33,24 @@ bot.on("messageCreate", (mensagem) => {
 
 
     if(mensagem.content === "!membros"){
+
+        const embedinfo = new EmbedBuilder()
+        .setColor('#FF1E00')
+        .setTitle("🥷 | Membros No Servidor")
+        .setDescription(`📊 | Aqui podes ver o estado atual da nossa comunidade! Atualmente somos ${mensagem.guild.memberCount} membros a partilhar código e a jogar juntos.`)
+        .addFields(
+            {name : "👑 | Dono", value :`<@${mensagem.guild.ownerId}>`, inline : true },
+            {name :"🎯 Próxima Meta ", value : `${mensagem.guild.memberCount} / 500`, inline : false},
+            {name : "🆔 ID do Servidor", value : `${mensagem.guild.Id}`, inline : true},
+            {name : "🔊 Total de Canais", value : `${mensagem.guild.channels.cache.size} canais + categorias`, inline : true}
+        )
+
+    
         
         const totalMembros = mensagem.guild.memberCount;  // vamos "contar quantos membros tem e guardar nesta variavel"
 
-        mensagem.channel.send(`O servidor tem o total de ${totalMembros}`);  
-    }
+        mensagem.reply({embeds: [embedinfo]});  
+};
     if(mensagem.content === "!informacao"){
 
         const embedInfo =new EmbedBuilder()  //criamos o nosso embed
@@ -55,7 +68,6 @@ bot.on("messageCreate", (mensagem) => {
             .setFooter({text : "Bot Criado Por sixteen"});// texto rodape
 
             mensagem.reply({embeds: [embedInfo]}); // enviar
-}
-});
+}});
 
-bot.login(process.env.TOKEN);
+bot.login(process.env.token);
