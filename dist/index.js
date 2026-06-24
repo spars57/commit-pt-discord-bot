@@ -39,6 +39,7 @@ const ping = __importStar(require("./commands/ping"));
 const members = __importStar(require("./commands/members"));
 const info = __importStar(require("./commands/info"));
 const guildMemberAdd_1 = require("./events/guildMemberAdd");
+const guildMemberUpdate_1 = require("./events/guildMemberUpdate");
 const commands = [ping, members, info];
 const bot = new discord_js_1.Client({
     intents: [
@@ -57,6 +58,9 @@ bot.once('ready', () => {
 });
 bot.on('guildMemberAdd', (member) => {
     (0, guildMemberAdd_1.handleGuildMemberAdd)(member).catch(console.error);
+});
+bot.on('guildMemberUpdate', (oldMember, newMember) => {
+    (0, guildMemberUpdate_1.handleGuildMemberUpdate)(oldMember, newMember).catch(console.error);
 });
 bot.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand())
