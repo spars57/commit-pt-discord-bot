@@ -71,6 +71,23 @@ npm run dev
 
 ---
 
+## Deployment
+
+The bot is hosted on a **VPS** and must be deployed manually by the owner.
+
+### Steps to deploy
+
+1. Build the project locally:
+   ```bash
+   npm run build
+   ```
+2. Connect to the VPS via **SFTP** and transfer the `dist/` folder to the server.
+3. Restart the bot process on the VPS.
+
+> **Note:** Only the owner has SFTP access to the VPS. There is no automated CI/CD pipeline for deployments.
+
+---
+
 ## Contributing
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org/). Commit messages must follow the format:

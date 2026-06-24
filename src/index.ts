@@ -12,8 +12,9 @@ import {
 import * as ping from './commands/ping';
 import * as members from './commands/members';
 import * as info from './commands/info';
-import { handleGuildMemberAdd } from './events/guildMemberAdd';
+import { handleGuildMemberAdd, assignProgrammerRole } from './events/guildMemberAdd';
 import { handleGuildMemberUpdate } from './events/guildMemberUpdate';
+import { handleMessageCreate } from './events/messageCreate';
 import { logger } from './logger';
 
 interface Command {
@@ -45,6 +46,11 @@ bot.once('ready', () => {
 bot.on('guildMemberAdd', (member: GuildMember) => {
   logger.info(`[guildMemberAdd] ${member.user.tag} (${member.id}) joined "${member.guild.name}"`);
   handleGuildMemberAdd(member).catch((err) => logger.error('[guildMemberAdd]', err));
+  assignProgrammerRole(member).catch((err) => logger.error('[guildMemberAdd/assignRole]', err));
+});
+
+bot.on('messageCreate', (message) => {
+  handleMessageCreate(message).catch((err) => logger.error('[messageCreate]', err));
 });
 
 bot.on('guildMemberUpdate', (oldMember, newMember) => {

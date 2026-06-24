@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleGuildMemberAdd = handleGuildMemberAdd;
+exports.assignProgrammerRole = assignProgrammerRole;
 const discord_js_1 = require("discord.js");
 const logger_1 = require("../logger");
 async function handleGuildMemberAdd(member) {
@@ -25,4 +26,16 @@ async function handleGuildMemberAdd(member) {
         .setThumbnail(member.user.displayAvatarURL())
         .setTimestamp();
     await channel.send({ embeds: [embed] });
+}
+const PROGRAMMER_ROLE_ID = '1519017947589382154';
+async function assignProgrammerRole(member) {
+    if (member.roles.cache.has(PROGRAMMER_ROLE_ID))
+        return;
+    const role = member.guild.roles.cache.get(PROGRAMMER_ROLE_ID);
+    if (!role) {
+        logger_1.logger.warn(`[assignProgrammerRole] Role ${PROGRAMMER_ROLE_ID} not found in "${member.guild.name}"`);
+        return;
+    }
+    await member.roles.add(role);
+    logger_1.logger.success(`[assignProgrammerRole] Assigned "${role.name}" to ${member.user.tag}`);
 }

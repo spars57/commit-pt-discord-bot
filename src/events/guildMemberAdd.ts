@@ -34,3 +34,20 @@ export async function handleGuildMemberAdd(member: GuildMember): Promise<void> {
 
   await (channel as TextChannel).send({ embeds: [embed] });
 }
+
+const PROGRAMMER_ROLE_ID = '1519017947589382154';
+
+export async function assignProgrammerRole(member: GuildMember): Promise<void> {
+  if (member.roles.cache.has(PROGRAMMER_ROLE_ID)) return;
+
+  const role = member.guild.roles.cache.get(PROGRAMMER_ROLE_ID);
+  if (!role) {
+    logger.warn(
+      `[assignProgrammerRole] Role ${PROGRAMMER_ROLE_ID} not found in "${member.guild.name}"`,
+    );
+    return;
+  }
+
+  await member.roles.add(role);
+  logger.success(`[assignProgrammerRole] Assigned "${role.name}" to ${member.user.tag}`);
+}

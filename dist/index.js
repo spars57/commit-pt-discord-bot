@@ -40,6 +40,7 @@ const members = __importStar(require("./commands/members"));
 const info = __importStar(require("./commands/info"));
 const guildMemberAdd_1 = require("./events/guildMemberAdd");
 const guildMemberUpdate_1 = require("./events/guildMemberUpdate");
+const messageCreate_1 = require("./events/messageCreate");
 const logger_1 = require("./logger");
 const commands = [ping, members, info];
 const bot = new discord_js_1.Client({
@@ -61,6 +62,10 @@ bot.once('ready', () => {
 bot.on('guildMemberAdd', (member) => {
     logger_1.logger.info(`[guildMemberAdd] ${member.user.tag} (${member.id}) joined "${member.guild.name}"`);
     (0, guildMemberAdd_1.handleGuildMemberAdd)(member).catch((err) => logger_1.logger.error('[guildMemberAdd]', err));
+    (0, guildMemberAdd_1.assignProgrammerRole)(member).catch((err) => logger_1.logger.error('[guildMemberAdd/assignRole]', err));
+});
+bot.on('messageCreate', (message) => {
+    (0, messageCreate_1.handleMessageCreate)(message).catch((err) => logger_1.logger.error('[messageCreate]', err));
 });
 bot.on('guildMemberUpdate', (oldMember, newMember) => {
     logger_1.logger.debug(`[guildMemberUpdate] ${newMember.user.tag} (${newMember.id}) updated in "${newMember.guild.name}"`);
