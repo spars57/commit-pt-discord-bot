@@ -1,16 +1,16 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 
 const COMMUNITY_LINKS = {
-  instagram: 'https://instagram.com/PLACEHOLDER',
+  instagram: 'https://www.instagram.com/commitpt_/',
   website: 'https://www.commitpt.com',
-  linkedin: 'https://linkedin.com/company/PLACEHOLDER',
+  linkedin: 'https://www.linkedin.com/company/commit-pt',
 };
 
 const CREATOR_LINKS = {
-  github: 'https://github.com/PLACEHOLDER',
-  instagram: 'https://instagram.com/PLACEHOLDER',
-  linkedin: 'https://linkedin.com/in/PLACEHOLDER',
-  tiktok: 'https://tiktok.com/@PLACEHOLDER',
+  github: 'https://github.com/spars57',
+  instagram: 'https://instagram.com/@brumoisao',
+  linkedin: 'https://linkedin.com/in/@brunomoisao',
+  tiktok: 'https://tiktok.com/@brumoisao2',
 };
 
 export const data = new SlashCommandBuilder()
