@@ -1,7 +1,5 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js'; // criamos o comando com slashcommandbuilder e ao ser usar o CommandInteraction avisa o bot q foi usado
-import { db } from '../lib/database'; // importar a database
-
-// oque vai aparecer ao usar o comando
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { db } from '../lib/database';
 
 export const data = new SlashCommandBuilder()
   .setName('rankxp')
@@ -10,61 +8,58 @@ export const data = new SlashCommandBuilder()
     (Option) =>
       Option.setName('membro')
         .setDescription('O membro que queres ver o rank( deixa vazio caso queiras ver o teu)')
-        .setRequired(false), // nao e obrigatorio marcar alguem podendo ver o proprio
+        .setRequired(false), // it's not necessary to tag someone when you can see your own
   );
 
-// funcao principal
+// main function
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-  //se o utilizador quer ver de alguem e mencionou ve dessa pessoa
-  //se nao mencionou nng ve o seu
-  const pessoa_escolhida = interaction.options.getUser('membro') || interaction.user;
+  // If a user is mentioned, show their XP rank.
+  // Otherwise, show the command user's XP rank.
 
-  const userId = pessoa_escolhida.id;
+  const targetMember = interaction.options.getUser('membro') || interaction.user;
+
+  const userId = targetMember.id;
   const guildId = interaction.guildId;
-
-  //nao usar o comaando fora do server
 
   if (!guildId) {
     await interaction.reply({
       content: '❌ Este comando só pode ser usado dentro de um servidor!',
-      ephemeral: true, // so quem usa o comando fora consegue ver a mensagem
+      ephemeral: true, //  Only the user who used the command can see this message.
     });
   }
 
-  //preparar o comando SQL para procurar  o usuario na db
+  //prepararing sql
 
-  const procurarUsuario = db.prepare('SELECT * FROM user_xp Where user_id = ? AND guild_id = ?');
+  const lookpeople = db.prepare('SELECT * FROM user_xp Where user_id = ? AND guild_id = ?');
 
-  // executar a busca pelo id da pessoa e do servidor
+  // execute sql
 
-  const dadosUsuario = procurarUsuario.get(userId, guildId) as
+  const UserInfos = lookpeople.get(userId, guildId) as
     | { user_id: string; guild_id: string; xp: number; level: number }
-    | undefined; // undefined se n encontrar o usuario naa db
+    | undefined; //  Undefined if the user is not found in the database.
 
-  let xpAtual = 0; // let porque pode se mudaar depois
-  let nivelAtual = 1;
+  let xp = 0;
+  let level = 1;
 
-  // se estiver na DB atualizamaos as infos
-
-  if (dadosUsuario) {
-    xpAtual = dadosUsuario.xp;
-    nivelAtual = dadosUsuario.level;
+  if (UserInfos) {
+    xp = UserInfos.xp;
+    level = UserInfos.level;
   }
 
   // formula para o xp upar level
 
-  const xpNecessario = 5 * Math.pow(nivelAtual, 2) + 50 * nivelAtual + 100;
+  const xpNecessary = 5 * Math.pow(level, 2) + 50 * level + 100;
 
-  const xpEmFalta = xpNecessario - xpAtual;
+  const xpMissing = xpNecessary - xp;
 
-  //receber os dados do bot
+  //receive infos
 
   await interaction.reply({
     content:
-      `📊 **Rank de ${pessoa_escolhida.username}**\n` +
-      `⭐ **Nível:** \`${nivelAtual}\`\n` +
-      `✨ **XP Atual:** \`${xpAtual} / ${xpNecessario}\` XP\n` +
-      `🎯 **Faltam:** \`${xpEmFalta}\` XP para o próximo nível!`,
+      `📊 **Rank de ${targetMember.username}**\n` +
+      `⭐ **Nível:** \`${level}\`\n` +
+      `✨ **XP Atual:** \`${xp} / ${xpNecessary}\` XP\n` +
+      `🎯 **Faltam:** \`${xpMissing}\` XP para o próximo nível!`,
   });
 }
