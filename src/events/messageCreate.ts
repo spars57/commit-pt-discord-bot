@@ -6,13 +6,13 @@ import { assignProgrammerRole } from './guildMemberAdd';
 import { queries } from '../queries/xp';
 
 const MIN_WORDS = 2;
-const MIN_WORD_LENGTH = 1;
+const MIN_WORD_LENGTH = 2;
 
 function countValidWords(content: string): number {
   return content
     .trim()
     .split(/\s+/)
-    .filter((word) => word.length > MIN_WORD_LENGTH).length;
+    .filter((word) => word.length >= MIN_WORD_LENGTH).length;
 }
 
 export async function handleMessageCreate(message: Message): Promise<void> {
@@ -42,18 +42,12 @@ export async function handleMessageCreate(message: Message): Promise<void> {
 
   const row = queries.getUserXp.get(message.author.id, message.guildId);
 
-  const previousLevel = row?.level ?? 1;
-  const newTotalXp = (row?.xp ?? 0) + xpGained;
+  const previousXp = row?.xp ?? 0;
+  const newTotalXp = previousXp + xpGained;
+  const { level: previousLevel } = calculateProgress(previousXp);
   const { level: newLevel } = calculateProgress(newTotalXp);
 
-  queries.upsertUserXp.run(
-    message.author.id,
-    message.guildId,
-    newTotalXp,
-    newLevel,
-    newTotalXp,
-    newLevel,
-  );
+  queries.upsertUserXp.run(message.author.id, message.guildId, newTotalXp);
 
   if (newLevel > previousLevel) {
     logger.success(`[messageCreate] ${message.author.tag} leveled up to level ${newLevel}`);

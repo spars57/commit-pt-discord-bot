@@ -1,6 +1,16 @@
-const MIN_INTERVAL_MS = 5_000; // minimum 5 seconds between XP-earning messages
+const MIN_INTERVAL_MS = 5_000;
 
 const lastMessageTimestamps = new Map<string, number>();
+
+setInterval(
+  () => {
+    const now = Date.now();
+    for (const [id, ts] of lastMessageTimestamps) {
+      if (now - ts > MIN_INTERVAL_MS) lastMessageTimestamps.delete(id);
+    }
+  },
+  60 * 60 * 1000,
+);
 
 export function checkAndActivateCooldown(userId: string): boolean {
   const now = Date.now();

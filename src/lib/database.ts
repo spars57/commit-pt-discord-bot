@@ -1,8 +1,11 @@
 import Database from 'better-sqlite3';
 import { join } from 'path';
+import { mkdirSync } from 'fs';
 import { logger } from '../logger';
 
-const dbPath = join(process.cwd(), 'database.db');
+const dbPath = join(process.cwd(), 'data', 'database.db');
+
+mkdirSync(join(process.cwd(), 'data'), { recursive: true });
 
 export const db = new Database(dbPath);
 
@@ -11,7 +14,6 @@ db.exec(`
     user_id  TEXT    NOT NULL,
     guild_id TEXT    NOT NULL,
     xp       INTEGER DEFAULT 0,
-    level    INTEGER DEFAULT 1,
     PRIMARY KEY (user_id, guild_id)
   )
 `);
