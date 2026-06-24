@@ -4,6 +4,7 @@ import {
   Client,
   Collection,
   GatewayIntentBits,
+  GuildMember,
   Interaction,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
@@ -11,6 +12,7 @@ import {
 import * as ping from './commands/ping';
 import * as members from './commands/members';
 import * as info from './commands/info';
+import { handleGuildMemberAdd } from './events/guildMemberAdd';
 
 interface Command {
   data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
@@ -35,6 +37,10 @@ for (const command of commands) {
 
 bot.once('ready', () => {
   console.log('AQUI E PAVUNA!');
+});
+
+bot.on('guildMemberAdd', (member: GuildMember) => {
+  handleGuildMemberAdd(member).catch(console.error);
 });
 
 bot.on('interactionCreate', async (interaction: Interaction) => {
