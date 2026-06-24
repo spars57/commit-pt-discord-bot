@@ -24,6 +24,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "better-sqlite3": "^12.11.1",
     "discord.js": "^14.26.4",
     "dotenv": "^17.4.2"
   },
@@ -31,6 +32,7 @@
     "@commitlint/cli": "^21.1.0",
     "@commitlint/config-conventional": "^21.1.0",
     "@eslint/js": "^10.0.1",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^26.0.0",
     "eslint": "^10.5.0",
     "husky": "^9.1.7",

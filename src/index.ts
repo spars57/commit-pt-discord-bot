@@ -1,3 +1,4 @@
+import './lib/database';
 import 'dotenv/config';
 import {
   ChatInputCommandInteraction,
@@ -12,7 +13,10 @@ import {
 import * as ping from './commands/ping';
 import * as members from './commands/members';
 import * as info from './commands/info';
-import * as links from './commands/links';
+import * as link from './commands/links';
+import * as rank from './commands/rank';
+import * as setxp from './commands/setxp';
+import * as leaderboard from './commands/leaderboard';
 import { handleGuildMemberAdd, assignProgrammerRole } from './events/guildMemberAdd';
 import { handleGuildMemberUpdate } from './events/guildMemberUpdate';
 import { handleMessageCreate } from './events/messageCreate';
@@ -23,7 +27,7 @@ interface Command {
   execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
 }
 
-const commands: Command[] = [ping, members, info, links];
+const commands: Command[] = [ping, members, info, link, rank, setxp, leaderboard];
 
 const bot = new Client({
   intents: [
