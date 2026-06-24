@@ -13,6 +13,7 @@ import * as ping from './commands/ping';
 import * as members from './commands/members';
 import * as info from './commands/info';
 import { handleGuildMemberAdd } from './events/guildMemberAdd';
+import { handleGuildMemberUpdate } from './events/guildMemberUpdate';
 
 interface Command {
   data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
@@ -41,6 +42,10 @@ bot.once('ready', () => {
 
 bot.on('guildMemberAdd', (member: GuildMember) => {
   handleGuildMemberAdd(member).catch(console.error);
+});
+
+bot.on('guildMemberUpdate', (oldMember, newMember) => {
+  handleGuildMemberUpdate(oldMember as GuildMember, newMember).catch(console.error);
 });
 
 bot.on('interactionCreate', async (interaction: Interaction) => {
