@@ -7,6 +7,7 @@ import { queries } from '../queries/xp';
 
 const MIN_WORDS = 2;
 const MIN_WORD_LENGTH = 2;
+const MAX_XP_PER_MESSAGE = 25;
 
 function countValidWords(content: string): number {
   return content
@@ -34,7 +35,7 @@ export async function handleMessageCreate(message: Message): Promise<void> {
     return;
   }
 
-  const xpGained = wordCount;
+  const xpGained = Math.min(wordCount, MAX_XP_PER_MESSAGE);
 
   logger.debug(
     `[messageCreate] ${message.author.tag} gained ${xpGained} XP (${wordCount} words) in guild ${message.guildId}`,
