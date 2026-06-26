@@ -7,8 +7,10 @@ import {
   GatewayIntentBits,
   GuildMember,
   Interaction,
+  Invite,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
+  SlashCommandSubcommandsOnlyBuilder,
 } from 'discord.js';
 import * as ping from './commands/ping';
 import * as members from './commands/members';
@@ -19,13 +21,23 @@ import * as setxp from './commands/setxp';
 import * as leaderboard from './commands/leaderboard';
 import * as logCommitPlus from './commands/log-commit-plus';
 import * as sellMessage from './commands/sell-message';
+import * as invites from './commands/invites';
+import * as invitesFrom from './commands/invites-from';
+import * as invitedBy from './commands/invited-by';
 import { handleGuildMemberAdd, assignProgrammerRole } from './events/guildMemberAdd';
 import { handleGuildMemberUpdate } from './events/guildMemberUpdate';
 import { handleMessageCreate } from './events/messageCreate';
+import {
+  cacheGuildInvites,
+  handleInviteUsed,
+  updateInviteCache,
+  removeFromInviteCache,
+  removeInviteRecord,
+} from './events/inviteTracker';
 import { logger } from './logger';
 
 interface Command {
-  data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
+  data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder;
   execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
 }
 
@@ -39,6 +51,9 @@ const commands: Command[] = [
   leaderboard,
   logCommitPlus,
   sellMessage,
+  invites,
+  invitesFrom,
+  invitedBy,
 ];
 
 const bot = new Client({
@@ -47,6 +62,7 @@ const bot = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildInvites,
   ],
 });
 
@@ -55,15 +71,37 @@ for (const command of commands) {
   commandMap.set(command.data.name, command);
 }
 
-bot.once('ready', () => {
+bot.once('ready', async () => {
   logger.success(`Bot online: ${bot.user?.tag}`);
   logger.info(`Guilds: ${bot.guilds.cache.size} | Commands: ${commandMap.size}`);
+
+  for (const guild of bot.guilds.cache.values()) {
+    await cacheGuildInvites(guild);
+  }
 });
 
 bot.on('guildMemberAdd', (member: GuildMember) => {
   logger.info(`[guildMemberAdd] ${member.user.tag} (${member.id}) joined "${member.guild.name}"`);
+  handleInviteUsed(member).catch((err) => logger.error('[inviteTracker]', err));
   handleGuildMemberAdd(member).catch((err) => logger.error('[guildMemberAdd]', err));
   assignProgrammerRole(member).catch((err) => logger.error('[guildMemberAdd/assignRole]', err));
+});
+
+bot.on('guildMemberRemove', (member) => {
+  logger.info(`[guildMemberRemove] ${member.user.tag} (${member.id}) left "${member.guild.name}"`);
+  removeInviteRecord(member.guild.id, member.id);
+});
+
+bot.on('inviteCreate', (invite: Invite) => {
+  if (!invite.guild) return;
+  updateInviteCache(invite.guild.id, invite.code, invite.uses ?? 0);
+  logger.info(`[inviteTracker] New invite created: ${invite.code} in "${invite.guild.name}"`);
+});
+
+bot.on('inviteDelete', (invite: Invite) => {
+  if (!invite.guild) return;
+  removeFromInviteCache(invite.guild.id, invite.code);
+  logger.info(`[inviteTracker] Invite deleted: ${invite.code} in "${invite.guild.name}"`);
 });
 
 bot.on('messageCreate', (message) => {

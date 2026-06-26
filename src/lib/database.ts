@@ -18,4 +18,14 @@ db.exec(`
   )
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS invite_tracker (
+    guild_id   TEXT    NOT NULL,
+    inviter_id TEXT    NOT NULL,
+    invitee_id TEXT    NOT NULL,
+    invite_code TEXT   NOT NULL,
+    joined_at  INTEGER NOT NULL
+  )
+`);
+
 logger.success(`[database] SQLite ready at ${dbPath}`);

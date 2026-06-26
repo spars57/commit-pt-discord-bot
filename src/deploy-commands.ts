@@ -1,5 +1,11 @@
 import 'dotenv/config';
-import { REST, Routes, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from 'discord.js';
+import {
+  REST,
+  Routes,
+  SlashCommandBuilder,
+  SlashCommandOptionsOnlyBuilder,
+  SlashCommandSubcommandsOnlyBuilder,
+} from 'discord.js';
 import * as ping from './commands/ping';
 import * as members from './commands/members';
 import * as info from './commands/info';
@@ -9,8 +15,15 @@ import * as setxp from './commands/setxp';
 import * as leaderboard from './commands/leaderboard';
 import * as logCommitPlus from './commands/log-commit-plus';
 import * as sellMessage from './commands/sell-message';
+import * as invites from './commands/invites';
+import * as invitesFrom from './commands/invites-from';
+import * as invitedBy from './commands/invited-by';
 
-const commands: (SlashCommandBuilder | SlashCommandOptionsOnlyBuilder)[] = [
+const commands: (
+  | SlashCommandBuilder
+  | SlashCommandOptionsOnlyBuilder
+  | SlashCommandSubcommandsOnlyBuilder
+)[] = [
   ping.data,
   members.data,
   info.data,
@@ -20,6 +33,9 @@ const commands: (SlashCommandBuilder | SlashCommandOptionsOnlyBuilder)[] = [
   leaderboard.data,
   logCommitPlus.data,
   sellMessage.data,
+  invites.data,
+  invitesFrom.data,
+  invitedBy.data,
 ];
 
 const token = process.env.TOKEN!;
