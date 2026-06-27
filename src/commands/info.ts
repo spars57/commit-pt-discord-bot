@@ -1,5 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { PRIMARY_COLOR } from '../constants';
+import { getFooterText } from '../lib/footer';
 
 export const data = new SlashCommandBuilder()
   .setName('info')
@@ -25,7 +26,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
       { name: 'ID do Servidor', value: guild.id, inline: true },
     )
     .setTimestamp()
-    .setFooter({ text: 'CommitPT — Para de programar sozinho.' });
+    .setFooter({ text: getFooterText(interaction) });
 
   await interaction.reply({ embeds: [embed] });
 }

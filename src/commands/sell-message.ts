@@ -10,6 +10,7 @@ import {
 } from 'discord.js';
 import { logger } from '../logger';
 import { PRIMARY_COLOR } from '../constants';
+import { getFooterText } from '../lib/footer';
 
 export const data = new SlashCommandBuilder()
   .setName('sell-message')
@@ -51,7 +52,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
         '• Participação em projetos internos reais, incluindo plannings, code reviews, product planning e decisões de UI/UX\n\n' +
         '💡 Independentemente de estares à procura do primeiro emprego, a preparar uma mudança de carreira ou a criar pessoas com os mesmos objetivos e profissionais dispostos a ajudar-te ao longo do caminho.\n\n',
     )
-    .setFooter({ text: 'CommitPT — Para de programar sozinho.' })
+    .setFooter({ text: getFooterText(interaction) })
     .setTimestamp();
 
   const button = new ButtonBuilder()

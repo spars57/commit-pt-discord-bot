@@ -1,5 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { PRIMARY_COLOR } from '../constants';
+import { getFooterText } from '../lib/footer';
 
 const COMMUNITY_LINKS = {
   instagram: 'https://www.instagram.com/commitpt_/',
@@ -41,7 +42,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
         ].join('\n'),
       },
     )
-    .setFooter({ text: 'CommitPT — Para de programar sozinho.' })
+    .setFooter({ text: getFooterText(interaction) })
     .setTimestamp();
 
   await interaction.reply({ embeds: [embed] });

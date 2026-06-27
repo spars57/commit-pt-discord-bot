@@ -9,6 +9,7 @@ import { queries } from '../queries/xp';
 import { getInviterOf, getInviterStats } from '../events/inviteTracker';
 import { logger } from '../logger';
 import { PRIMARY_COLOR } from '../constants';
+import { getFooterText } from '../lib/footer';
 
 function progressBar(current: number, total: number, length = 12): string {
   const filled = Math.round((current / total) * length);
@@ -106,7 +107,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
       },
       { name: '🎭 Cargos', value: roles },
     )
-    .setFooter({ text: 'CommitPT — Para de programar sozinho.' })
+    .setFooter({ text: getFooterText(interaction) })
     .setTimestamp();
 
   await interaction.editReply({ embeds: [embed] });
