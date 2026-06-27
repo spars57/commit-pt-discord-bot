@@ -58,7 +58,7 @@ export async function handleInviteUsed(member: GuildMember): Promise<void> {
   const inviterTag = usedInvite.inviter.tag;
 
   db.prepare(
-    `INSERT INTO invite_tracker (guild_id, inviter_id, invitee_id, invite_code, joined_at)
+    `INSERT OR REPLACE INTO invite_tracker (guild_id, inviter_id, invitee_id, invite_code, joined_at)
      VALUES (?, ?, ?, ?, ?)`,
   ).run(guild.id, inviterId, member.id, usedInvite.code, Date.now());
 
@@ -106,7 +106,7 @@ export function getInvitesLeaderboard(
 ): { inviterId: string; total: number }[] {
   const rows = db
     .prepare(
-      `SELECT inviter_id, COUNT(*) as total FROM invite_tracker WHERE guild_id = ?
+      `SELECT inviter_id, COUNT(DISTINCT invitee_id) as total FROM invite_tracker WHERE guild_id = ?
        GROUP BY inviter_id ORDER BY total DESC LIMIT ?`,
     )
     .all(guildId, limit) as { inviter_id: string; total: number }[];

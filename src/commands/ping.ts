@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 export const data = new SlashCommandBuilder()
   .setName('ping')
-  .setDescription('Checks if the bot is online');
+  .setDescription('Verifica se o bot está online');
 
 export async function execute(interaction: ChatInputCommandInteraction): Promise<void> {
   await interaction.reply('🏓 Pong!');

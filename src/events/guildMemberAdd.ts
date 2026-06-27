@@ -1,18 +1,19 @@
 import { EmbedBuilder, GuildMember, TextChannel } from 'discord.js';
 import { logger } from '../logger';
+import { CHANNELS, PRIMARY_COLOR, ROLES } from '../constants';
 
 export async function handleGuildMemberAdd(member: GuildMember): Promise<void> {
-  const channelId = process.env.WELCOME_CHANNEL_ID;
-
-  if (!channelId) {
+  if (!CHANNELS.WELCOME) {
     logger.warn('[guildMemberAdd] WELCOME_CHANNEL_ID is not set in .env');
     return;
   }
 
-  const channel = member.guild.channels.cache.get(channelId);
+  const channel = member.guild.channels.cache.get(CHANNELS.WELCOME);
 
   if (!channel || !channel.isTextBased()) {
-    logger.warn(`[guildMemberAdd] Welcome channel ${channelId} not found or is not a text channel`);
+    logger.warn(
+      `[guildMemberAdd] Welcome channel ${CHANNELS.WELCOME} not found or is not a text channel`,
+    );
     return;
   }
 
@@ -21,13 +22,13 @@ export async function handleGuildMemberAdd(member: GuildMember): Promise<void> {
   );
 
   const embed = new EmbedBuilder()
-    .setColor('#e74c3c')
+    .setColor(PRIMARY_COLOR)
     .setTitle(`Bem-vindo/a à comunidade CommitPT, ${member.displayName}! 🎉`)
     .setDescription(
       `Olá ${member}! Fica à vontade e começa por te apresentar.\n\n` +
-        `📝 Faz a tua apresentação em <#${process.env.PRESENTATIONS_CHANNEL_ID ?? 'apresentações'}>\n` +
-        `💬 Envia a tua primeira mensagem em <#${process.env.GENERAL_CHANNEL_ID ?? 'chat-geral'}>\n` +
-        `🔒 Informações sobre a Commit+ em <#${process.env.COMMIT_PLUS_CHANNEL_ID ?? 'acesso-commit-plus'}>`,
+        `📝 Faz a tua apresentação em <#${CHANNELS.PRESENTATIONS}>\n` +
+        `💬 Envia a tua primeira mensagem em <#${CHANNELS.GENERAL}>\n` +
+        `🔒 Informações sobre a Commit+ em <#${CHANNELS.COMMIT_PLUS}>`,
     )
     .setThumbnail(member.user.displayAvatarURL())
     .setTimestamp();
@@ -35,15 +36,13 @@ export async function handleGuildMemberAdd(member: GuildMember): Promise<void> {
   await (channel as TextChannel).send({ embeds: [embed] });
 }
 
-const PROGRAMMER_ROLE_ID = '1519017947589382154';
-
 export async function assignProgrammerRole(member: GuildMember): Promise<void> {
-  if (member.roles.cache.has(PROGRAMMER_ROLE_ID)) return;
+  if (member.roles.cache.has(ROLES.PROGRAMMER)) return;
 
-  const role = member.guild.roles.cache.get(PROGRAMMER_ROLE_ID);
+  const role = member.guild.roles.cache.get(ROLES.PROGRAMMER);
   if (!role) {
     logger.warn(
-      `[assignProgrammerRole] Role ${PROGRAMMER_ROLE_ID} not found in "${member.guild.name}"`,
+      `[assignProgrammerRole] Role ${ROLES.PROGRAMMER} not found in "${member.guild.name}"`,
     );
     return;
   }

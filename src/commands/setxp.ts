@@ -7,22 +7,27 @@ import {
 import { calculateProgress } from '../lib/levels';
 import { queries } from '../queries/xp';
 import { logger } from '../logger';
+import { PRIMARY_COLOR } from '../constants';
 
 export const data = new SlashCommandBuilder()
   .setName('setxp')
-  .setDescription("Set a member's total XP (Administrators only)")
+  .setDescription('Define o XP total de um membro (apenas Administradores)')
   .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
   .addUserOption((option) =>
-    option.setName('member').setDescription('The member to update').setRequired(true),
+    option.setName('member').setDescription('O membro a atualizar').setRequired(true),
   )
   .addIntegerOption((option) =>
-    option.setName('xp').setDescription('The new total XP value').setRequired(true).setMinValue(0),
+    option
+      .setName('xp')
+      .setDescription('O novo valor total de XP')
+      .setRequired(true)
+      .setMinValue(0),
   );
 
 export async function execute(interaction: ChatInputCommandInteraction): Promise<void> {
   if (!interaction.guildId || !interaction.memberPermissions) {
     await interaction.reply({
-      content: 'This command can only be used in a server.',
+      content: 'Este comando só pode ser usado num servidor.',
       ephemeral: true,
     });
     return;
@@ -31,7 +36,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
   if (!interaction.memberPermissions.has(PermissionFlagsBits.Administrator)) {
     logger.warn(`[setxp] Unauthorized attempt by ${interaction.user.tag}`);
     await interaction.reply({
-      content: 'You need Administrator permissions to use this command.',
+      content: 'Precisas de permissões de Administrador para usar este comando.',
       ephemeral: true,
     });
     return;
@@ -53,15 +58,15 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
   );
 
   const embed = new EmbedBuilder()
-    .setColor('#e74c3c')
-    .setTitle('⭐ XP Updated')
+    .setColor(PRIMARY_COLOR)
+    .setTitle('⭐ XP Atualizado')
     .setThumbnail(target.displayAvatarURL())
     .addFields(
-      { name: 'Member', value: `${target}`, inline: true },
-      { name: 'New XP', value: `**${newXp}**`, inline: true },
-      { name: 'Level', value: `${previousLevel} → **${newLevel}**`, inline: true },
+      { name: 'Membro', value: `${target}`, inline: true },
+      { name: 'Novo XP', value: `**${newXp}**`, inline: true },
+      { name: 'Nível', value: `${previousLevel} → **${newLevel}**`, inline: true },
     )
-    .setFooter({ text: `Updated by ${interaction.user.username}` })
+    .setFooter({ text: `Atualizado por ${interaction.user.username}` })
     .setTimestamp();
 
   await interaction.reply({ embeds: [embed], ephemeral: true });

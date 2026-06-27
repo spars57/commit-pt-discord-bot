@@ -1,30 +1,31 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { PRIMARY_COLOR } from '../constants';
 
 export const data = new SlashCommandBuilder()
   .setName('info')
-  .setDescription('Shows detailed information about the server');
+  .setDescription('Mostra informação detalhada sobre o servidor');
 
 export async function execute(interaction: ChatInputCommandInteraction): Promise<void> {
   const guild = interaction.guild;
 
   if (!guild) {
     await interaction.reply({
-      content: 'This command can only be used in a server.',
+      content: 'Este comando só pode ser usado num servidor.',
       ephemeral: true,
     });
     return;
   }
 
   const embed = new EmbedBuilder()
-    .setColor('#3498db')
-    .setTitle(`ℹ️ Server Information: ${guild.name}`)
-    .setDescription('Here are the main details about this Discord server.')
+    .setColor(PRIMARY_COLOR)
+    .setTitle(`ℹ️ Informações do Servidor: ${guild.name}`)
+    .setDescription('Aqui estão os principais detalhes deste servidor Discord.')
     .addFields(
-      { name: 'Total Members', value: `${guild.memberCount}`, inline: true },
-      { name: 'Server ID', value: guild.id, inline: true },
+      { name: 'Total de Membros', value: `${guild.memberCount}`, inline: true },
+      { name: 'ID do Servidor', value: guild.id, inline: true },
     )
     .setTimestamp()
-    .setFooter({ text: 'Bot created by sixteen' });
+    .setFooter({ text: 'CommitPT — Para de programar sozinho.' });
 
   await interaction.reply({ embeds: [embed] });
 }

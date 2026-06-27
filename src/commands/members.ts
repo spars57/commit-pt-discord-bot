@@ -1,14 +1,15 @@
 import { ChatInputCommandInteraction, EmbedBuilder, Role, SlashCommandBuilder } from 'discord.js';
+import { PRIMARY_COLOR } from '../constants';
 
 const NEXT_GOAL = 500;
 
 export const data = new SlashCommandBuilder()
   .setName('members')
-  .setDescription('Shows the total number of members in the server')
+  .setDescription('Mostra o número total de membros no servidor')
   .addRoleOption((option) =>
     option
       .setName('role')
-      .setDescription('Filter members by role (e.g. Commit+)')
+      .setDescription('Filtrar membros por cargo (ex: Commit+)')
       .setRequired(false),
   );
 
@@ -17,7 +18,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
 
   if (!guild) {
     await interaction.reply({
-      content: 'This command can only be used in a server.',
+      content: 'Este comando só pode ser usado num servidor.',
       ephemeral: true,
     });
     return;
@@ -34,35 +35,35 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
   const totalChannels = guild.channels.cache.size;
 
   const description = role
-    ? `📋 | Members with the **${role.name}** role: **${filteredCount}**`
-    : `📊 | Here you can see the current state of our community! We currently have **${filteredCount}** members sharing code and playing together.`;
+    ? `📋 | Membros com o cargo **${role.name}**: **${filteredCount}**`
+    : `📊 | Aqui podes ver o estado atual da nossa comunidade! Temos atualmente **${filteredCount}** membros a partilhar código e a evoluir juntos.`;
 
   const embed = new EmbedBuilder()
-    .setColor('#e74c3c')
-    .setTitle('🖥️ | Members In The Server')
+    .setColor(PRIMARY_COLOR)
+    .setTitle('🖥️ | Membros no Servidor')
     .setDescription(description)
     .addFields(
       {
-        name: '👑 | Owner',
+        name: '👑 | Dono',
         value: `${owner.toString()}\n${
           owner.roles.cache
             .filter((r) => r.id !== guild.id)
             .map((r) => r.toString())
-            .join(' ') || 'No roles'
+            .join(' ') || 'Sem cargos'
         }`,
       },
       {
-        name: '🎯 | Next Goal',
+        name: '🎯 | Próximo Objetivo',
         value: `${filteredCount} / ${NEXT_GOAL}`,
       },
       {
-        name: '🪪 | Server ID',
+        name: '🪪 | ID do Servidor',
         value: guild.id,
         inline: true,
       },
       {
-        name: '🔊 | Total Channels',
-        value: `${totalChannels} channels`,
+        name: '🔊 | Total de Canais',
+        value: `${totalChannels} canais`,
         inline: true,
       },
     )

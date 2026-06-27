@@ -4,6 +4,7 @@ import { checkAndActivateCooldown } from '../lib/cooldown';
 import { calculateProgress } from '../lib/levels';
 import { assignProgrammerRole } from './guildMemberAdd';
 import { queries } from '../queries/xp';
+import { CHANNELS } from '../constants';
 
 const MIN_WORDS = 2;
 const MIN_WORD_LENGTH = 2;
@@ -48,7 +49,7 @@ export async function handleMessageCreate(message: Message): Promise<void> {
   const { level: previousLevel } = calculateProgress(previousXp);
   const { level: newLevel } = calculateProgress(newTotalXp);
 
-  queries.upsertUserXp.run(message.author.id, message.guildId, newTotalXp);
+  queries.upsertUserActivity.run(message.author.id, message.guildId, newTotalXp, Date.now());
 
   if (newLevel > previousLevel) {
     logger.success(`[messageCreate] ${message.author.tag} leveled up to level ${newLevel}`);
@@ -57,19 +58,18 @@ export async function handleMessageCreate(message: Message): Promise<void> {
 }
 
 async function sendLevelUpNotification(message: Message, newLevel: number): Promise<void> {
-  const channelId = process.env.WELCOME_CHANNEL_ID;
-  if (!channelId) {
+  if (!CHANNELS.WELCOME) {
     logger.warn('[messageCreate] WELCOME_CHANNEL_ID not set, skipping level-up notification');
     return;
   }
 
-  const channel = message.client.channels.cache.get(channelId);
+  const channel = message.client.channels.cache.get(CHANNELS.WELCOME);
   if (!channel?.isTextBased()) {
-    logger.warn(`[messageCreate] Channel ${channelId} not found or not text-based`);
+    logger.warn(`[messageCreate] Channel ${CHANNELS.WELCOME} not found or not text-based`);
     return;
   }
 
   await (channel as TextChannel).send(
-    `🎉 <@${message.author.id}> just reached **level ${newLevel}**! Keep it up! 🚀`,
+    `🎉 <@${message.author.id}> acabou de atingir o **nível ${newLevel}**! Continua assim! 🚀`,
   );
 }

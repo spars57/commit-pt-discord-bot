@@ -1,5 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getInvitesLeaderboard } from '../events/inviteTracker';
+import { PRIMARY_COLOR } from '../constants';
 
 export const data = new SlashCommandBuilder()
   .setName('invites')
@@ -25,7 +26,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
     .join('\n');
 
   const embed = new EmbedBuilder()
-    .setColor('#e74c3c')
+    .setColor(PRIMARY_COLOR)
     .setTitle('🏆 Leaderboard de Convites')
     .setDescription(description)
     .setTimestamp();

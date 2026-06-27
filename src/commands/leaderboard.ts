@@ -2,18 +2,19 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from '
 import { calculateProgress } from '../lib/levels';
 import { queries } from '../queries/xp';
 import { logger } from '../logger';
+import { PRIMARY_COLOR } from '../constants';
 
 const LEADERBOARD_SIZE = 10;
 const MEDALS = ['🥇', '🥈', '🥉'];
 
 export const data = new SlashCommandBuilder()
   .setName('leaderboard')
-  .setDescription('Shows the top 10 members by XP in this server');
+  .setDescription('Mostra os 10 membros com mais XP neste servidor');
 
 export async function execute(interaction: ChatInputCommandInteraction): Promise<void> {
   if (!interaction.guildId) {
     await interaction.reply({
-      content: 'This command can only be used in a server.',
+      content: 'Este comando só pode ser usado num servidor.',
       ephemeral: true,
     });
     return;
@@ -24,7 +25,10 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
   const rows = queries.getTopXp.all(interaction.guildId, LEADERBOARD_SIZE);
 
   if (rows.length === 0) {
-    await interaction.reply({ content: 'No XP data found for this server yet.', ephemeral: true });
+    await interaction.reply({
+      content: 'Ainda não há dados de XP para este servidor.',
+      ephemeral: true,
+    });
     return;
   }
 
@@ -34,18 +38,18 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
       const medal = MEDALS[index] ?? `**#${index + 1}**`;
       try {
         const user = await interaction.client.users.fetch(row.user_id);
-        return `${medal} ${user.username} — Level **${level}** · ${row.xp} XP`;
+        return `${medal} ${user.username} — Nível **${level}** · ${row.xp} XP`;
       } catch {
-        return `${medal} Unknown user — Level **${level}** · ${row.xp} XP`;
+        return `${medal} Utilizador desconhecido — Nível **${level}** · ${row.xp} XP`;
       }
     }),
   );
 
   const embed = new EmbedBuilder()
-    .setColor('#e74c3c')
-    .setTitle('🏆 XP Leaderboard')
+    .setColor(PRIMARY_COLOR)
+    .setTitle('🏆 Leaderboard de XP')
     .setDescription(lines.join('\n'))
-    .setFooter({ text: `Top ${rows.length} members · CommitPT` })
+    .setFooter({ text: `Top ${rows.length} membros · CommitPT` })
     .setTimestamp();
 
   await interaction.reply({ embeds: [embed] });

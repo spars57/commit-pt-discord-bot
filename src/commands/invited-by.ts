@@ -1,5 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getInviterOf } from '../events/inviteTracker';
+import { PRIMARY_COLOR } from '../constants';
 
 export const data = new SlashCommandBuilder()
   .setName('invited-by')
@@ -21,13 +22,10 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
   }
 
   const embed = new EmbedBuilder()
-    .setColor('#e74c3c')
+    .setColor(PRIMARY_COLOR)
     .setTitle(`Origem do convite de ${target.displayName}`)
     .setThumbnail(target.displayAvatarURL())
-    .addFields(
-      { name: 'Convidado por', value: `<@${result.inviterId}>`, inline: true },
-      { name: 'Código do convite', value: result.code, inline: true },
-    );
+    .addFields({ name: 'Convidado por', value: `<@${result.inviterId}>`, inline: true });
 
   await interaction.reply({ embeds: [embed] });
 }

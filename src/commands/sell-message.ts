@@ -9,24 +9,33 @@ import {
   TextChannel,
 } from 'discord.js';
 import { logger } from '../logger';
+import { PRIMARY_COLOR } from '../constants';
 
 export const data = new SlashCommandBuilder()
   .setName('sell-message')
-  .setDescription('Send the Commit+ membership announcement embed')
+  .setDescription('Envia o embed de anúncio da adesão Commit+')
   .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 
 export async function execute(interaction: ChatInputCommandInteraction): Promise<void> {
-  if (!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) {
+  if (!interaction.guildId || !interaction.memberPermissions) {
+    await interaction.reply({
+      content: 'Este comando só pode ser usado num servidor.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  if (!interaction.memberPermissions.has(PermissionFlagsBits.Administrator)) {
     logger.warn(`[sell-message] Unauthorized attempt by ${interaction.user.tag}`);
     await interaction.reply({
-      content: 'You need Administrator permissions to use this command.',
+      content: 'Precisas de permissões de Administrador para usar este comando.',
       ephemeral: true,
     });
     return;
   }
 
   const embed = new EmbedBuilder()
-    .setColor('#e74c3c')
+    .setColor(PRIMARY_COLOR)
     .setTitle('🚀 Junta-te ao Commit+ e acelera a tua carreira na área da tecnologia.')
     .setDescription(
       'Ao entrares na comunidade, terás acesso a:\n\n' +
@@ -56,5 +65,5 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
 
   logger.success(`[sell-message] ${interaction.user.tag} sent the Commit+ sell message`);
 
-  await interaction.reply({ content: '✅ Message sent.', ephemeral: true });
+  await interaction.reply({ content: '✅ Mensagem enviada.', ephemeral: true });
 }

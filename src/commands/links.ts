@@ -1,4 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { PRIMARY_COLOR } from '../constants';
 
 const COMMUNITY_LINKS = {
   instagram: 'https://www.instagram.com/commitpt_/',
@@ -15,11 +16,11 @@ const CREATOR_LINKS = {
 
 export const data = new SlashCommandBuilder()
   .setName('links')
-  .setDescription('Shows all CommitPT community and creator links');
+  .setDescription('Mostra todos os links da comunidade e do criador CommitPT');
 
 export async function execute(interaction: ChatInputCommandInteraction): Promise<void> {
   const embed = new EmbedBuilder()
-    .setColor('#e74c3c')
+    .setColor(PRIMARY_COLOR)
     .setTitle('🔗 Links CommitPT')
     .addFields(
       {

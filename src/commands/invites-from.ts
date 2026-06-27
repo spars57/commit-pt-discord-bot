@@ -1,7 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getInviterStats } from '../events/inviteTracker';
-
-const COMMIT_PLUS_ROLE_ID = '1514004224889983026';
+import { PRIMARY_COLOR, ROLES } from '../constants';
 
 export const data = new SlashCommandBuilder()
   .setName('invites-from')
@@ -14,6 +13,14 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
   await interaction.deferReply();
 
   const target = interaction.options.getUser('membro', true);
+
+  try {
+    await interaction.guild!.members.fetch(target.id);
+  } catch {
+    await interaction.editReply({ content: 'Esse utilizador não é membro deste servidor.' });
+    return;
+  }
+
   const stats = getInviterStats(interaction.guildId!, target.id);
 
   let commitPlusCount = 0;
@@ -23,7 +30,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
     let hasCommitPlus = false;
     try {
       const member = await interaction.guild!.members.fetch(id);
-      hasCommitPlus = member.roles.cache.has(COMMIT_PLUS_ROLE_ID);
+      hasCommitPlus = member.roles.cache.has(ROLES.COMMIT_PLUS);
     } catch {
       // member left the server
     }
@@ -32,7 +39,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
   }
 
   const embed = new EmbedBuilder()
-    .setColor('#e74c3c')
+    .setColor(PRIMARY_COLOR)
     .setTitle(`Convites de ${target.displayName}`)
     .setThumbnail(target.displayAvatarURL())
     .addFields(

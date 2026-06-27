@@ -26,6 +26,7 @@ The bot is built with **discord.js v14** and TypeScript. Entry point is `src/ind
 2. Import it in `src/index.ts` and add it to the `commands` array.
 3. Import it in `src/deploy-commands.ts` and add `<name>.data` to the `commands` array.
 4. Run `npm run deploy` to register it with Discord.
+5. **Always** update `README.md` (Commands section) and `src/commands/help.ts` to reflect the new or changed command — name, description, and options.
 
 ### Adding an event
 
