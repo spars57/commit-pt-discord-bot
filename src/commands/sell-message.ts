@@ -37,20 +37,41 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
 
   const embed = new EmbedBuilder()
     .setColor(PRIMARY_COLOR)
-    .setTitle('🚀 Junta-te ao Commit+ e acelera a tua carreira na área da tecnologia.')
+    .setTitle('🚀 Junta-te ao Commit+ e acelera a tua carreira na área da tecnologia')
     .setDescription(
-      'Ao entrares na comunidade, terás acesso a:\n\n' +
-        '• Calls semanais com profissionais da indústria\n' +
-        '• Mentorias e sessões de esclarecimento de dúvidas\n' +
-        '• Networking com developers, estudantes e profissionais de IT\n' +
-        '• Revisão de CV e preparação para entrevistas técnicas\n' +
-        '• Workshops sobre Frontend, Backend, Cloud, IA, Cibersegurança e muito mais\n' +
-        '• Resumos exclusivos de disciplinas de Engenharia Informática e outros tópicos técnicos\n' +
-        '• Oportunidades de emprego e referências partilhadas pela comunidade\n' +
-        '• Canal para apresentar os teus projetos e receber feedback\n' +
-        '• Acesso direto à equipa da Commit PT para apoio no teu crescimento profissional\n' +
-        '• Participação em projetos internos reais, incluindo plannings, code reviews, product planning e decisões de UI/UX\n\n' +
-        '💡 Independentemente de estares à procura do primeiro emprego, a preparar uma mudança de carreira ou a criar pessoas com os mesmos objetivos e profissionais dispostos a ajudar-te ao longo do caminho.\n\n',
+      '💡 Quer estejas à procura do primeiro emprego, a preparar uma mudança de carreira ou simplesmente à procura de uma comunidade onde possas aprender, colaborar e crescer, o Commit+ foi criado para te ajudar a evoluir ao lado de pessoas com os mesmos objetivos.',
+    )
+    .addFields(
+      {
+        name: '📞 Aprendizagem & Mentoria',
+        value: [
+          '• Calls semanais com profissionais da indústria',
+          '• Mentorias e sessões para esclarecer dúvidas técnicas e de carreira',
+          '• Workshops técnicos exclusivos',
+        ].join('\n'),
+      },
+      {
+        name: '🤝 Networking & Carreira',
+        value: [
+          '• Networking com estudantes, developers e profissionais de IT',
+          '• Revisão de CV e preparação para entrevistas técnicas',
+          '• Oportunidades de emprego e referências partilhadas pela comunidade',
+        ].join('\n'),
+      },
+      {
+        name: '📚 Conteúdos Exclusivos',
+        value: [
+          '• Resumos exclusivos de Engenharia Informática e outros conteúdos de estudo',
+          '• Feedback aos teus projetos e acompanhamento personalizado da equipa CommitPT',
+        ].join('\n'),
+      },
+      {
+        name: '🛠️ Projetos Reais',
+        value: [
+          '• Participação em projetos reais da CommitPT',
+          '• Colaboração em plannings, code reviews, arquitetura, desenvolvimento e outras decisões técnicas',
+        ].join('\n'),
+      },
     )
     .setFooter({ text: getFooterText(interaction) })
     .setTimestamp();

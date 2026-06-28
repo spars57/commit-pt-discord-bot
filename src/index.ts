@@ -39,6 +39,7 @@ import {
 } from './events/inviteTracker';
 import { handleMessageCreate } from './events/messageCreate';
 import { handleTicketClose, handleTicketModalSubmit, handleTicketOpen } from './events/tickets';
+import { enqueue } from './lib/queue';
 import './lib/database';
 import { logger, setLoggerClient } from './logger';
 
@@ -81,18 +82,20 @@ for (const command of commands) {
   commandMap.set(command.data.name, command);
 }
 
-async function updateCommitPlusStatus(): Promise<void> {
-  const guild = bot.guilds.cache.get(process.env.GUILD_ID!);
-  if (!guild) return;
+let commitPlusCount = 0;
 
-  await guild.members.fetch();
-  const role = guild.roles.cache.get(ROLES.COMMIT_PLUS);
-  const count = role?.members.size ?? 0;
-  bot.user?.setActivity(`${count} Commit+ Members`);
+function updateCommitPlusStatus(): void {
+  bot.user?.setActivity(`${commitPlusCount} Commit+ Members`);
 }
 
 bot.once('ready', async () => {
   setLoggerClient(bot);
+
+  const guild = bot.guilds.cache.get(process.env.GUILD_ID!);
+  if (guild) {
+    await guild.members.fetch();
+    commitPlusCount = guild.roles.cache.get(ROLES.COMMIT_PLUS)?.members.size ?? 0;
+  }
 
   updateCommitPlusStatus();
   logger.success(`Bot online: ${bot.user?.tag}`);
@@ -135,6 +138,11 @@ bot.on('guildMemberUpdate', (oldMember, newMember) => {
   logger.debug(
     `[guildMemberUpdate] ${newMember.user.tag} (${newMember.id}) updated in "${newMember.guild.name}"`,
   );
+  const hadCommitPlus = (oldMember as GuildMember).roles.cache.has(ROLES.COMMIT_PLUS);
+  const hasCommitPlus = newMember.roles.cache.has(ROLES.COMMIT_PLUS);
+  if (!hadCommitPlus && hasCommitPlus) commitPlusCount++;
+  if (hadCommitPlus && !hasCommitPlus) commitPlusCount--;
+
   handleGuildMemberUpdate(oldMember as GuildMember, newMember).catch((err) =>
     logger.error('[guildMemberUpdate]', err),
   );
@@ -180,21 +188,23 @@ bot.on('interactionCreate', async (interaction: Interaction) => {
     const member = interaction.member;
     const hasRole = member.roles.cache.has(role.id);
 
-    if (hasRole) {
-      await member.roles.remove(role);
-      logger.info(`[select-roles] Removed role "${roleName}" from ${interaction.user.tag}`);
-      await interaction.reply({
-        content: `${formatEmoji(roleConfig.emoji)} Cargo **${roleName}** removido.`,
-        ephemeral: true,
-      });
-    } else {
-      await member.roles.add(role);
-      logger.info(`[select-roles] Added role "${roleName}" to ${interaction.user.tag}`);
-      await interaction.reply({
-        content: `${formatEmoji(roleConfig.emoji)} Cargo **${roleName}** adicionado!`,
-        ephemeral: true,
-      });
-    }
+    await interaction.deferReply({ ephemeral: true });
+
+    enqueue(async () => {
+      if (hasRole) {
+        await member.roles.remove(role);
+        logger.info(`[select-roles] Removed role "${roleName}" from ${interaction.user.tag}`);
+        await interaction.editReply({
+          content: `${formatEmoji(roleConfig.emoji)} Cargo **${roleName}** removido.`,
+        });
+      } else {
+        await member.roles.add(role);
+        logger.info(`[select-roles] Added role "${roleName}" to ${interaction.user.tag}`);
+        await interaction.editReply({
+          content: `${formatEmoji(roleConfig.emoji)} Cargo **${roleName}** adicionado!`,
+        });
+      }
+    });
     return;
   }
 
@@ -220,6 +230,18 @@ bot.on('interactionCreate', async (interaction: Interaction) => {
       ephemeral: true,
     });
   }
+});
+
+bot.on('error', (err) => {
+  logger.error('[discord] Client error:', err);
+});
+
+process.on('uncaughtException', (err) => {
+  logger.error('[process] Uncaught exception:', err);
+});
+
+process.on('unhandledRejection', (reason) => {
+  logger.error('[process] Unhandled rejection:', reason);
 });
 
 bot.login(process.env.TOKEN);
