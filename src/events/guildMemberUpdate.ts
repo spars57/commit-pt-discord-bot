@@ -1,6 +1,7 @@
 import { EmbedBuilder, GuildMember, TextChannel } from 'discord.js';
 import { logger } from '../logger';
 import { CHANNELS, PRIMARY_COLOR, ROLES } from '../constants';
+import { openCommitPlusTicket } from './tickets';
 
 export async function handleGuildMemberUpdate(
   oldMember: GuildMember,
@@ -40,4 +41,8 @@ export async function handleGuildMemberUpdate(
     .setTimestamp();
 
   await (channel as TextChannel).send({ embeds: [embed] });
+
+  openCommitPlusTicket(newMember).catch((err) =>
+    logger.error('[guildMemberUpdate] Failed to open Commit+ ticket:', err),
+  );
 }
