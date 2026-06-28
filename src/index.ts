@@ -26,6 +26,7 @@ import * as selectLanguages from './commands/select-languages';
 import * as selectRoles from './commands/select-roles';
 import * as sellMessage from './commands/sell-message';
 import * as setxp from './commands/setxp';
+import * as setupTickets from './commands/setup-tickets';
 import { AUTO_ROLES_AREAS, AUTO_ROLES_LANGUAGES, formatEmoji } from './constants';
 import { assignProgrammerRole, handleGuildMemberAdd } from './events/guildMemberAdd';
 import { handleGuildMemberUpdate } from './events/guildMemberUpdate';
@@ -37,6 +38,7 @@ import {
   updateInviteCache,
 } from './events/inviteTracker';
 import { handleMessageCreate } from './events/messageCreate';
+import { handleTicketClose, handleTicketModalSubmit, handleTicketOpen } from './events/tickets';
 import './lib/database';
 import { logger, setLoggerClient } from './logger';
 
@@ -61,6 +63,7 @@ const commands: Command[] = [
   help,
   selectRoles,
   selectLanguages,
+  setupTickets,
 ];
 
 const bot = new Client({
@@ -127,6 +130,21 @@ bot.on('guildMemberUpdate', (oldMember, newMember) => {
 });
 
 bot.on('interactionCreate', async (interaction: Interaction) => {
+  if (interaction.isModalSubmit() && interaction.customId === 'ticket:modal') {
+    handleTicketModalSubmit(interaction).catch((err) => logger.error('[tickets]', err));
+    return;
+  }
+
+  if (interaction.isButton() && interaction.customId === 'ticket:open') {
+    handleTicketOpen(interaction).catch((err) => logger.error('[tickets]', err));
+    return;
+  }
+
+  if (interaction.isButton() && interaction.customId === 'ticket:close') {
+    handleTicketClose(interaction).catch((err) => logger.error('[tickets]', err));
+    return;
+  }
+
   if (interaction.isButton() && interaction.customId.startsWith('select-role:')) {
     const roleName = interaction.customId.split(':')[1];
     const allRoles = [...AUTO_ROLES_AREAS, ...AUTO_ROLES_LANGUAGES];

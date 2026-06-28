@@ -20,6 +20,7 @@ import * as invitesFrom from './commands/invites-from';
 import * as invitedBy from './commands/invited-by';
 import * as help from './commands/help';
 import * as selectRoles from './commands/select-roles';
+import * as setupTickets from './commands/setup-tickets';
 import * as selectLanguages from './commands/select-languages';
 
 const commands: (
@@ -42,6 +43,7 @@ const commands: (
   help.data,
   selectRoles.data,
   selectLanguages.data,
+  setupTickets.data,
 ];
 
 const token = process.env.TOKEN!;

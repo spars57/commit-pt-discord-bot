@@ -32,6 +32,7 @@ A Discord bot for the Commit PT server, built with TypeScript and discord.js v14
 | `/setxp member:<user> xp:<value>` | Set a member's total XP |
 | `/select-roles` | Post the area roles selection embed with buttons |
 | `/select-languages` | Post the programming languages roles selection embed with buttons |
+| `/setup-tickets` | Post the ticket opening embed in the tickets channel |
 
 ---
 

@@ -53,4 +53,13 @@ try {
   // index already exists
 }
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS ticket_counter (
+    id      INTEGER PRIMARY KEY CHECK (id = 1),
+    counter INTEGER DEFAULT 0
+  )
+`);
+
+db.prepare(`INSERT OR IGNORE INTO ticket_counter (id, counter) VALUES (1, 0)`).run();
+
 logger.success(`[database] SQLite ready at ${dbPath}`);
