@@ -1,38 +1,96 @@
 # Commit PT Bot
 
-A Discord bot for the Commit PT server, built with TypeScript and discord.js v14.
+A Discord bot for the Commit PT community server, built with TypeScript and discord.js v14.
+
+---
+
+## Features
+
+### XP & Levels
+Members earn XP by sending messages in the server. XP gain is rate-limited to one message per minute to prevent spam. The bot tracks each member's total XP and calculates their level, which can be checked via `/me`. A server-wide leaderboard is available via `/leaderboard`.
+
+### Invite Tracking
+The bot tracks which member invited each new user. This allows staff to see who invited whom and rank members by number of invites. Invite data is persisted in SQLite and survives bot restarts.
+
+### Role Selection
+Members can self-assign roles based on their area of interest and programming languages. Two dedicated embeds with buttons are available — one for areas (Frontend, Backend, Fullstack, DevOps, Cloud, Cybersecurity, Mobile, UI/UX, Data Science, Game Development, AI) and one for programming languages (JavaScript, TypeScript, Python, Java, Go, PHP, C/C++). Clicking a button toggles the role on or off.
+
+### Tickets
+Any member can open a support ticket by clicking a button in the tickets channel. They are prompted to describe the subject via a modal. A private channel is then created — visible only to the ticket creator and the Staff role — with a button to close and delete it when resolved.
+
+### Commit+ Onboarding
+When a member receives the Commit+ role, the bot automatically:
+1. Announces it in the welcome channel.
+2. Opens a private onboarding ticket with the member and staff.
+3. Sends a structured embed with onboarding questions to understand the member's goals, experience, and how the community can help them.
+
+### Welcome Messages
+When a new member joins the server, the bot sends a welcome embed in the welcome channel with links to key channels (presentations, general, role selection, Commit+).
+
+### Alerts
+Bot warnings and errors are forwarded to a private alerts channel. Errors also tag the Staff role for immediate visibility.
 
 ---
 
 ## Commands
 
-### Public commands
+### Public
 
 | Command | Description |
 |---|---|
-| `/help` | Shows all available bot commands |
+| `/help` | Shows all available public commands |
 | `/ping` | Checks if the bot is online |
 | `/info` | Shows detailed server information |
 | `/members` | Shows the total number of members in the server |
 | `/members role:<role>` | Shows the number of members with a specific role |
 | `/links` | Shows all CommitPT community and creator links |
-| `/rank` | Check your level and XP in the server |
-| `/rank member:<user>` | Check another member's level and XP |
+| `/me` | Shows your XP, level, and rank in the server |
+| `/me membro:<user>` | Shows another member's XP, level, and rank |
 | `/leaderboard` | Shows the top 10 members by XP |
 | `/invites leaderboard` | Ranking of members with the most invites |
-| `/invited-by member:<user>` | Shows who invited a member |
-| `/invites-from member:<user>` | Shows how many members someone has invited |
+| `/invited-by membro:<user>` | Shows who invited a specific member |
+| `/invites-from membro:<user>` | Shows how many members someone has invited |
 
-### Admin-only commands
+### Admin-only
 
 | Command | Description |
 |---|---|
-| `/log-commit-plus user:<user>` | Announce that a member has received the Commit+ role |
+| `/setxp membro:<user> xp:<value>` | Manually set a member's total XP |
+| `/log-commit-plus user:<user>` | Manually announce that a member received the Commit+ role |
 | `/sell-message` | Send the Commit+ membership announcement embed |
-| `/setxp member:<user> xp:<value>` | Set a member's total XP |
-| `/select-roles` | Post the area roles selection embed with buttons |
-| `/select-languages` | Post the programming languages roles selection embed with buttons |
+| `/select-roles` | Post the area roles selection embed in the roles channel |
+| `/select-languages` | Post the programming languages selection embed in the roles channel |
 | `/setup-tickets` | Post the ticket opening embed in the tickets channel |
+
+---
+
+## Automated Behaviours
+
+| Trigger | Action |
+|---|---|
+| Member joins the server | Welcome embed sent to the welcome channel; Programador role assigned |
+| Member receives Commit+ role | Announcement sent to the welcome channel; onboarding ticket created automatically |
+| Member clicks "Abrir Ticket" | Modal shown to collect subject; private ticket channel created with Staff |
+| Member clicks "Fechar Ticket" | Ticket channel deleted after 3 seconds |
+| Member clicks a role button | Role toggled on or off |
+| Bot emits a warning | Message sent to the alerts channel |
+| Bot emits an error | Message sent to the alerts channel with Staff mention |
+
+---
+
+## Project Structure
+
+```
+src/
+├── commands/        # Slash command handlers
+├── events/          # Discord event handlers
+├── lib/             # Shared utilities (database, footer)
+├── constants.ts     # All IDs and shared constants
+├── logger.ts        # Logger with Discord alerts integration
+└── index.ts         # Bot entry point, event wiring
+data/
+└── database.db      # SQLite database (XP, invites, ticket counter)
+```
 
 ---
 
@@ -40,9 +98,10 @@ A Discord bot for the Commit PT server, built with TypeScript and discord.js v14
 
 - **Language:** TypeScript
 - **Library:** discord.js v14
+- **Database:** SQLite via better-sqlite3
 - **Linting:** ESLint + Prettier
 - **Git hooks:** Husky + commitlint (Conventional Commits)
-- **CI:** GitHub Actions
+- **CI/CD:** GitHub Actions → SFTP to VPS
 
 ---
 
@@ -82,9 +141,9 @@ npm run dev
 
 | Script | Description |
 |---|---|
-| `npm run dev` | Run the bot with ts-node |
+| `npm run dev` | Run the bot with ts-node (development) |
 | `npm run build` | Compile TypeScript to `dist/` |
-| `npm run start` | Run the compiled bot |
+| `npm run start` | Run the compiled bot from `dist/` |
 | `npm run deploy` | Register slash commands with Discord |
 | `npm run lint` | Run ESLint |
 | `npm run lint:fix` | Run ESLint with auto-fix |
@@ -94,18 +153,7 @@ npm run dev
 
 ## Deployment
 
-The bot is hosted on a **VPS** and must be deployed manually by the owner.
-
-### Steps to deploy
-
-1. Build the project locally:
-   ```bash
-   npm run build
-   ```
-2. Connect to the VPS via **SFTP** and transfer the `dist/` folder to the server.
-3. Restart the bot process on the VPS.
-
-> **Note:** Deployments are triggered automatically via GitHub Actions on every merge to `master`. The pipeline builds the project and transfers `dist/` to the VPS via SFTP. The bot process must be restarted manually on the VPS after deployment.
+Deployments are triggered automatically on every merge to `master` via GitHub Actions. The pipeline installs dependencies, builds the project, and transfers `dist/` to the VPS via SFTP. The bot process must be restarted manually on the VPS after each deployment.
 
 ---
 
@@ -119,7 +167,6 @@ fix: correct member count
 chore: update dependencies
 ```
 
-Before each commit, Husky will automatically run:
-- TypeScript type checking
+Before each commit, Husky automatically runs:
 - ESLint + Prettier on staged files
-- Commit message validation
+- Commit message validation via commitlint
