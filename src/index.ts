@@ -81,11 +81,12 @@ for (const command of commands) {
   commandMap.set(command.data.name, command);
 }
 
-function updateCommitPlusStatus(): void {
+async function updateCommitPlusStatus(): Promise<void> {
   const guild = bot.guilds.cache.get(process.env.GUILD_ID!);
   if (!guild) return;
 
-  const count = guild.roles.cache.get(ROLES.COMMIT_PLUS)?.members.size ?? 0;
+  const role = await guild.roles.fetch(ROLES.COMMIT_PLUS);
+  const count = role?.members.size ?? 0;
   bot.user?.setActivity(`${count} Commit+ Members`);
 }
 
