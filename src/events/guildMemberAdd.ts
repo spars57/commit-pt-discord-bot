@@ -28,6 +28,7 @@ export async function handleGuildMemberAdd(member: GuildMember): Promise<void> {
       `Olá ${member}! Fica à vontade e começa por te apresentar.\n\n` +
         `📝 Faz a tua apresentação em <#${CHANNELS.PRESENTATIONS}>\n` +
         `💬 Envia a tua primeira mensagem em <#${CHANNELS.GENERAL}>\n` +
+        `🏷️ Escolhe as tuas áreas e linguagens em <#${CHANNELS.ROLES_SELECTION}>\n` +
         `🔒 Informações sobre a Commit+ em <#${CHANNELS.COMMIT_PLUS}>`,
     )
     .setThumbnail(member.user.displayAvatarURL())
