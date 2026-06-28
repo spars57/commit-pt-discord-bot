@@ -19,6 +19,8 @@ import * as invites from './commands/invites';
 import * as invitesFrom from './commands/invites-from';
 import * as invitedBy from './commands/invited-by';
 import * as help from './commands/help';
+import * as selectRoles from './commands/select-roles';
+import * as selectLanguages from './commands/select-languages';
 
 const commands: (
   | SlashCommandBuilder
@@ -38,6 +40,8 @@ const commands: (
   invitesFrom.data,
   invitedBy.data,
   help.data,
+  selectRoles.data,
+  selectLanguages.data,
 ];
 
 const token = process.env.TOKEN!;

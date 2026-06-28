@@ -25,6 +25,9 @@ import * as invites from './commands/invites';
 import * as invitesFrom from './commands/invites-from';
 import * as invitedBy from './commands/invited-by';
 import * as help from './commands/help';
+import * as selectRoles from './commands/select-roles';
+import * as selectLanguages from './commands/select-languages';
+import { AUTO_ROLES_AREAS, AUTO_ROLES_LANGUAGES, formatEmoji } from './constants';
 import { handleGuildMemberAdd, assignProgrammerRole } from './events/guildMemberAdd';
 import { handleGuildMemberUpdate } from './events/guildMemberUpdate';
 import { handleMessageCreate } from './events/messageCreate';
@@ -56,6 +59,8 @@ const commands: Command[] = [
   invitesFrom,
   invitedBy,
   help,
+  selectRoles,
+  selectLanguages,
 ];
 
 const bot = new Client({
@@ -120,6 +125,47 @@ bot.on('guildMemberUpdate', (oldMember, newMember) => {
 });
 
 bot.on('interactionCreate', async (interaction: Interaction) => {
+  if (interaction.isButton() && interaction.customId.startsWith('select-role:')) {
+    const roleName = interaction.customId.split(':')[1];
+    const allRoles = [...AUTO_ROLES_AREAS, ...AUTO_ROLES_LANGUAGES];
+    const roleConfig = allRoles.find((r) => r.name === roleName);
+
+    if (!roleConfig || !interaction.guild || !(interaction.member instanceof GuildMember)) {
+      await interaction.reply({ content: 'Cargo inválido.', ephemeral: true });
+      return;
+    }
+
+    const role = interaction.guild.roles.cache.get(roleConfig.roleId);
+
+    if (!role) {
+      await interaction.reply({
+        content: `O cargo **${roleName}** não existe no servidor.`,
+        ephemeral: true,
+      });
+      return;
+    }
+
+    const member = interaction.member;
+    const hasRole = member.roles.cache.has(role.id);
+
+    if (hasRole) {
+      await member.roles.remove(role);
+      logger.info(`[select-roles] Removed role "${roleName}" from ${interaction.user.tag}`);
+      await interaction.reply({
+        content: `${formatEmoji(roleConfig.emoji)} Cargo **${roleName}** removido.`,
+        ephemeral: true,
+      });
+    } else {
+      await member.roles.add(role);
+      logger.info(`[select-roles] Added role "${roleName}" to ${interaction.user.tag}`);
+      await interaction.reply({
+        content: `${formatEmoji(roleConfig.emoji)} Cargo **${roleName}** adicionado!`,
+        ephemeral: true,
+      });
+    }
+    return;
+  }
+
   if (!interaction.isChatInputCommand()) return;
 
   logger.info(

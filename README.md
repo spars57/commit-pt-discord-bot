@@ -30,6 +30,8 @@ A Discord bot for the Commit PT server, built with TypeScript and discord.js v14
 | `/log-commit-plus user:<user>` | Announce that a member has received the Commit+ role |
 | `/sell-message` | Send the Commit+ membership announcement embed |
 | `/setxp member:<user> xp:<value>` | Set a member's total XP |
+| `/select-roles` | Post the area roles selection embed with buttons |
+| `/select-languages` | Post the programming languages roles selection embed with buttons |
 
 ---
 
@@ -102,7 +104,7 @@ The bot is hosted on a **VPS** and must be deployed manually by the owner.
 2. Connect to the VPS via **SFTP** and transfer the `dist/` folder to the server.
 3. Restart the bot process on the VPS.
 
-> **Note:** Only the owner has SFTP access to the VPS. There is no automated CI/CD pipeline for deployments.
+> **Note:** Deployments are triggered automatically via GitHub Actions on every merge to `master`. The pipeline builds the project and transfers `dist/` to the VPS via SFTP. The bot process must be restarted manually on the VPS after deployment.
 
 ---
 
