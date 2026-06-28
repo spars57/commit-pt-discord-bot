@@ -63,6 +63,11 @@ export const AUTO_ROLES_LANGUAGES: { name: string; emoji: RoleEmoji; roleId: str
     emoji: { name: 'c_', id: '1520736246878437426' },
     roleId: '1411410723887648838',
   },
+  {
+    name: 'C#',
+    emoji: { name: 'csharp', id: '1520900008017264814' },
+    roleId: '1520899633612587129',
+  },
 ];
 
 export const CATEGORIES = {
