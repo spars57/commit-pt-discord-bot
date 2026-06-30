@@ -68,6 +68,16 @@ export const AUTO_ROLES_LANGUAGES: { name: string; emoji: RoleEmoji; roleId: str
     emoji: { name: 'csharp', id: '1520900008017264814' },
     roleId: '1520899633612587129',
   },
+  {
+    name: 'Swift',
+    emoji: { name: 'swift', id: '1521432039029473371' },
+    roleId: '1521432182076477500',
+  },
+  {
+    name: 'Kotlin',
+    emoji: { name: 'kotlin', id: '1521432694767091873' },
+    roleId: '1521432443775746148',
+  },
 ];
 
 export const CATEGORIES = {
