@@ -25,6 +25,8 @@ import * as help from './commands/help';
 import * as selectRoles from './commands/select-roles';
 import * as setupTickets from './commands/setup-tickets';
 import * as selectLanguages from './commands/select-languages';
+import * as participarProjetos from './commands/participar-projetos';
+import * as receberAlertas from './commands/receber-alertas';
 
 const commands: (
   | SlashCommandBuilder
@@ -50,6 +52,8 @@ const commands: (
   enviarNoticias.data,
   criarNoticia.data,
   stats.data,
+  participarProjetos.data,
+  receberAlertas.data,
 ];
 
 const token = process.env.TOKEN!;

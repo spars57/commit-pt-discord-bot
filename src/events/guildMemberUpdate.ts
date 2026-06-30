@@ -1,6 +1,6 @@
 import { EmbedBuilder, GuildMember, TextChannel } from 'discord.js';
 import { logger } from '../logger';
-import { CHANNELS, PRIMARY_COLOR, ROLES } from '../constants';
+import { ALERT_ROLE_ID, CHANNELS, PRIMARY_COLOR, PROJECT_ROLES, ROLES } from '../constants';
 import { openCommitPlusTicket } from './tickets';
 
 export async function handleGuildMemberUpdate(
@@ -9,6 +9,19 @@ export async function handleGuildMemberUpdate(
 ): Promise<void> {
   const hadRole = oldMember.roles.cache.has(ROLES.COMMIT_PLUS);
   const hasRole = newMember.roles.cache.has(ROLES.COMMIT_PLUS);
+
+  if (hadRole && !hasRole) {
+    const roleIdsToRemove = [...PROJECT_ROLES.map((r) => r.roleId), ALERT_ROLE_ID].filter((id) =>
+      newMember.roles.cache.has(id),
+    );
+    if (roleIdsToRemove.length > 0) {
+      await newMember.roles.remove(roleIdsToRemove);
+      logger.info(
+        `[guildMemberUpdate] Removed ${roleIdsToRemove.length} project role(s) from ${newMember.user.tag} (lost Commit+)`,
+      );
+    }
+    return;
+  }
 
   if (hadRole || !hasRole) return;
 

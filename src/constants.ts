@@ -13,6 +13,14 @@ export const ROLES = {
   STAFF: '1427069200123433021',
 } as const;
 
+export const PROJECT_ROLES = [
+  { name: 'Discord Developer', roleId: '1521545395459719379' },
+  { name: 'Website Developer', roleId: '1521545491278463077' },
+  { name: 'Platform Developer', roleId: '1521545454394015918' },
+] as const;
+
+export const ALERT_ROLE_ID = '1521545727699062864';
+
 export const AUTO_ROLES_AREAS = [
   { name: 'Frontend', emoji: '🎨', roleId: '1411394991628226590' },
   { name: 'Backend', emoji: '⚙️', roleId: '1411395057180868618' },

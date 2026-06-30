@@ -30,7 +30,17 @@ import * as selectRoles from './commands/select-roles';
 import * as sellMessage from './commands/sell-message';
 import * as setxp from './commands/setxp';
 import * as setupTickets from './commands/setup-tickets';
-import { AUTO_ROLES_AREAS, AUTO_ROLES_LANGUAGES, formatEmoji, ROLES } from './constants';
+import * as participarProjetos from './commands/participar-projetos';
+import * as receberAlertas from './commands/receber-alertas';
+import {
+  ALERT_ROLE_ID,
+  AUTO_ROLES_AREAS,
+  AUTO_ROLES_LANGUAGES,
+  CHANNELS,
+  formatEmoji,
+  PROJECT_ROLES,
+  ROLES,
+} from './constants';
 import { assignProgrammerRole, handleGuildMemberAdd } from './events/guildMemberAdd';
 import { handleGuildMemberUpdate } from './events/guildMemberUpdate';
 import {
@@ -72,6 +82,8 @@ const commands: Command[] = [
   enviarNoticias,
   criarNoticia,
   stats,
+  participarProjetos,
+  receberAlertas,
 ];
 
 const bot = new Client({
@@ -174,6 +186,105 @@ bot.on('interactionCreate', async (interaction: Interaction) => {
 
   if (interaction.isButton() && interaction.customId === 'ticket:close') {
     handleTicketClose(interaction).catch((err) => logger.error('[tickets]', err));
+    return;
+  }
+
+  if (interaction.isButton() && interaction.customId.startsWith('project-role:')) {
+    if (!(interaction.member instanceof GuildMember) || !interaction.guild) {
+      await interaction.reply({ content: 'Erro ao processar a interação.', ephemeral: true });
+      return;
+    }
+
+    const member = interaction.member;
+
+    if (!member.roles.cache.has(ROLES.COMMIT_PLUS)) {
+      await interaction.reply({
+        content: `Queres participar nos nossos projetos internos? Para isso é necessário uma subscrição Commit+. Podes obter mais informações através do canal <#${CHANNELS.COMMIT_PLUS}>!`,
+        ephemeral: true,
+      });
+      return;
+    }
+
+    const roleName = interaction.customId.split(':')[1];
+    const roleConfig = PROJECT_ROLES.find((r) => r.name === roleName);
+
+    if (!roleConfig) {
+      await interaction.reply({ content: 'Cargo inválido.', ephemeral: true });
+      return;
+    }
+
+    const role = interaction.guild.roles.cache.get(roleConfig.roleId);
+
+    if (!role) {
+      await interaction.reply({
+        content: `O cargo **${roleName}** não existe no servidor.`,
+        ephemeral: true,
+      });
+      return;
+    }
+
+    await interaction.deferReply({ ephemeral: true });
+
+    enqueue(async () => {
+      const hasRole = member.roles.cache.has(role.id);
+      if (hasRole) {
+        await member.roles.remove(role);
+        logger.info(`[project-roles] Removed role "${roleName}" from ${interaction.user.tag}`);
+        await interaction.editReply({ content: `Cargo **${roleName}** removido.` });
+      } else {
+        await member.roles.add(role);
+        logger.info(`[project-roles] Added role "${roleName}" to ${interaction.user.tag}`);
+        await interaction.editReply({ content: `Cargo **${roleName}** adicionado!` });
+      }
+    });
+    return;
+  }
+
+  if (interaction.isButton() && interaction.customId.startsWith('alert-role:')) {
+    if (!(interaction.member instanceof GuildMember) || !interaction.guild) {
+      await interaction.reply({ content: 'Erro ao processar a interação.', ephemeral: true });
+      return;
+    }
+
+    if (!interaction.member.roles.cache.has(ROLES.COMMIT_PLUS)) {
+      await interaction.reply({
+        content: `Esta funcionalidade é exclusiva para membros Commit+. Podes obter mais informações através do canal <#${CHANNELS.COMMIT_PLUS}>!`,
+        ephemeral: true,
+      });
+      return;
+    }
+
+    const role = interaction.guild.roles.cache.get(ALERT_ROLE_ID);
+
+    if (!role) {
+      await interaction.reply({
+        content: 'O cargo de alertas não existe no servidor.',
+        ephemeral: true,
+      });
+      return;
+    }
+
+    const member = interaction.member;
+    const subscribe = interaction.customId === 'alert-role:subscribe';
+
+    await interaction.deferReply({ ephemeral: true });
+
+    enqueue(async () => {
+      const hasRole = member.roles.cache.has(role.id);
+      if (subscribe && !hasRole) {
+        await member.roles.add(role);
+        logger.info(`[alert-role] Subscribed ${interaction.user.tag} to alerts`);
+        await interaction.editReply({ content: 'Vais passar a receber alertas do bot!' });
+      } else if (!subscribe && hasRole) {
+        await member.roles.remove(role);
+        logger.info(`[alert-role] Unsubscribed ${interaction.user.tag} from alerts`);
+        await interaction.editReply({ content: 'Deixaste de receber alertas do bot.' });
+      } else if (subscribe && hasRole) {
+        await interaction.editReply({ content: 'Já estás a receber alertas do bot.' });
+      } else {
+        await interaction.editReply({ content: 'Já não estás a receber alertas do bot.' });
+      }
+    });
     return;
   }
 

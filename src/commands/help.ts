@@ -31,6 +31,13 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
         ].join('\n'),
       },
       {
+        name: '🛠️ Projetos & Alertas',
+        value: [
+          '`/participar-projetos` — Painel de seleção de roles para projetos internos (Commit+ only)',
+          '`/receber-alertas` — Subscreve ou cancela alertas de erros do Discord Bot',
+        ].join('\n'),
+      },
+      {
         name: '📨 Convites',
         value: [
           '`/invites leaderboard` — Ranking dos membros com mais convites',
