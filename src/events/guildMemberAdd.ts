@@ -36,7 +36,8 @@ export async function handleGuildMemberAdd(member: GuildMember): Promise<void> {
         `📝 Faz a tua apresentação em <#${CHANNELS.PRESENTATIONS}>\n` +
         `💬 Envia a tua primeira mensagem em <#${CHANNELS.GENERAL}>\n` +
         `🏷️ Escolhe as tuas áreas e linguagens em <#${CHANNELS.ROLES_SELECTION}>\n` +
-        `🔒 Informações sobre a Commit+ em <#${CHANNELS.COMMIT_PLUS}>`,
+        `🔒 Informações sobre a Commit+ em <#${CHANNELS.COMMIT_PLUS}>\n\n` +
+        `💡 Cada mensagem que enviares dá-te XP — usa \`/me\` para veres o teu nível e \`/leaderboard\` para veres o ranking da comunidade.`,
     )
     .setThumbnail(member.user.displayAvatarURL())
     .setTimestamp();

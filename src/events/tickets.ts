@@ -15,7 +15,7 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from 'discord.js';
-import { CATEGORIES, PRIMARY_COLOR, ROLES } from '../constants';
+import { CATEGORIES, CHANNELS, PRIMARY_COLOR, ROLES } from '../constants';
 import { db } from '../lib/database';
 import { logger } from '../logger';
 
@@ -181,6 +181,9 @@ export async function openCommitPlusTicket(member: GuildMember): Promise<void> {
     .setDescription(
       `Olá ${member}! Obrigado por fazeres parte do **Commit+**.\n\n` +
         `Gostaríamos de te conhecer melhor para perceber como te podemos ajudar a tirar o máximo partido da comunidade.\n\n` +
+        `Enquanto isso, aqui ficam algumas coisas que podes fazer desde já:\n` +
+        `🛠️ Junta-te aos nossos projetos internos em <#${CHANNELS.ROLES_SELECTION}>\n` +
+        `🔔 Subscreve alertas do bot também em <#${CHANNELS.ROLES_SELECTION}>\n\n` +
         `Responde às questões abaixo ao teu ritmo — não há respostas certas ou erradas. 🙂`,
     )
     .setThumbnail(member.user.displayAvatarURL())
