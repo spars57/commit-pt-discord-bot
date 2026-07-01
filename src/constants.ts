@@ -90,6 +90,11 @@ export const AUTO_ROLES_LANGUAGES: { name: string; emoji: RoleEmoji; roleId: str
     emoji: { name: 'ruby', id: '1521623203359756532' },
     roleId: '1521623476090175692',
   },
+  {
+    name: 'Rust',
+    emoji: { name: 'rust', id: '1521797657352339506' },
+    roleId: '1411410766359433298',
+  },
 ];
 
 export const CATEGORIES = {
