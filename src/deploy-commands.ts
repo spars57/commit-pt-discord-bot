@@ -28,6 +28,7 @@ import * as selectLanguages from './commands/select-languages';
 import * as participarProjetos from './commands/participar-projetos';
 import * as receberAlertas from './commands/receber-alertas';
 import * as costs from './commands/costs';
+import * as assignInvitation from './commands/assign-invitation';
 
 const commands: (
   | SlashCommandBuilder
@@ -56,6 +57,7 @@ const commands: (
   participarProjetos.data,
   receberAlertas.data,
   costs.data,
+  assignInvitation.data,
 ];
 
 const token = process.env.TOKEN!;

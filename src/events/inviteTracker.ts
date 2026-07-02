@@ -114,6 +114,15 @@ export function getInvitesLeaderboard(
   return rows.map((r) => ({ inviterId: r.inviter_id, total: r.total }));
 }
 
+export function assignInviteRecord(guildId: string, inviteeId: string, inviterId: string): void {
+  db.prepare(
+    `INSERT OR REPLACE INTO invite_tracker (guild_id, inviter_id, invitee_id, invite_code, joined_at)
+     VALUES (?, ?, ?, ?, ?)`,
+  ).run(guildId, inviterId, inviteeId, 'manual', Date.now());
+
+  logger.info(`[inviteTracker] Manually assigned invite: ${inviteeId} invited by ${inviterId}`);
+}
+
 export function getInviterOf(
   guildId: string,
   inviteeId: string,

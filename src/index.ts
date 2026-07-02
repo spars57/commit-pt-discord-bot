@@ -33,6 +33,7 @@ import * as setupTickets from './commands/setup-tickets';
 import * as participarProjetos from './commands/participar-projetos';
 import * as receberAlertas from './commands/receber-alertas';
 import * as costs from './commands/costs';
+import * as assignInvitation from './commands/assign-invitation';
 import {
   AUTO_ROLES_AREAS,
   AUTO_ROLES_LANGUAGES,
@@ -85,6 +86,7 @@ const commands: Command[] = [
   participarProjetos,
   receberAlertas,
   costs,
+  assignInvitation,
 ];
 
 const bot = new Client({

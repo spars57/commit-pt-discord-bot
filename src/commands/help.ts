@@ -43,6 +43,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
           '`/invites leaderboard` — Ranking dos membros com mais convites',
           '`/invited-by membro:<utilizador>` — Mostra quem convidou um membro',
           '`/invites-from membro:<utilizador>` — Mostra quantos membros alguém convidou',
+          '`/assign-invitation target:<membro> inviter:<membro>` — Atribui manualmente um convite (Admin)',
         ].join('\n'),
       },
     )
