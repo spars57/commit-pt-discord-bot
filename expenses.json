@@ -1,17 +1,24 @@
 {
   "Projects": [
     {
+      "name": "☁️ Servidor do Discord",
+      "items": [{ "name": "3 Boosts", "cost": 13.89, "currency": "EUR", "plan": "MENSAL" }]
+    },
+    {
       "name": "🌐 Website CommitPT",
       "items": [
         { "name": "Domínio", "cost": 32, "currency": "EUR", "plan": "ANUAL" },
-        { "name": "2 emails associados ao domínio", "cost": 22, "currency": "EUR", "plan": "SEMESTRAL" }
+        {
+          "name": "2 emails associados ao domínio",
+          "cost": 22,
+          "currency": "EUR",
+          "plan": "SEMESTRAL"
+        }
       ]
     },
     {
       "name": "🤖 Discord Bot",
-      "items": [
-        { "name": "VPS", "cost": 1.99, "currency": "USD", "plan": "MENSAL" }
-      ]
+      "items": [{ "name": "VPS", "cost": 1.99, "currency": "USD", "plan": "MENSAL" }]
     },
     {
       "name": "🚀 Plataforma CommitPT",
